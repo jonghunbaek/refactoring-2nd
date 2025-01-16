@@ -6,13 +6,7 @@ public class Statement {
         int volumeCredit = 0;
         StringBuilder result = new StringBuilder(String.format("청구내역 (고객명: %s)\n", invoice.getCustomer()));
         for (Performance performance : invoice.getPerformances()) {
-            // 포인트를 적립한다.
-            volumeCredit += Math.max(performance.getAudience() - 30, 0);
-
-            // 희극 관객 5명마다 추가 포인트를 제공한다.
-            if (playFor(plays, performance).getType().equals("comedy")) {
-                volumeCredit += Math.floor(performance.getAudience() / 5);
-            }
+            volumeCredit += volumeCreditFor(plays, performance);
 
             // 청구 내역을 출력한다.
             result.append(String.format("%s: $%d %d석\n",playFor(plays, performance).getName(), amountFor(performance, plays) / 100, performance.getAudience()));
@@ -22,6 +16,16 @@ public class Statement {
         result.append(String.format("총액: $%d\n",totalAmount / 100));
         result.append(String.format("적립 포인트: %d점", volumeCredit));
         return result.toString();
+    }
+
+    private int volumeCreditFor(Plays plays, Performance performance) {
+        int volumeCredit = Math.max(performance.getAudience() - 30, 0);
+
+        if (playFor(plays, performance).getType().equals("comedy")) {
+            volumeCredit += (int) Math.floor((double) performance.getAudience() / 5);
+        }
+
+        return volumeCredit;
     }
 
     private int amountFor(Performance performance, Plays plays) {
