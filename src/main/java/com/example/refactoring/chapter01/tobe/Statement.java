@@ -3,8 +3,6 @@ package com.example.refactoring.chapter01.tobe;
 public class Statement {
     public String statement(Invoice invoice, Plays plays) {
         int totalAmount = 0;
-        int volumeCredit = 0;
-
         StringBuilder result = new StringBuilder(String.format("청구내역 (고객명: %s)\n", invoice.getCustomer()));
         for (Performance performance : invoice.getPerformances()) {
             // 청구 내역을 출력한다.
@@ -12,6 +10,7 @@ public class Statement {
             totalAmount += amountFor(performance, plays);
         }
 
+        int volumeCredit = 0;
         for (Performance performance : invoice.getPerformances()) {
             volumeCredit += volumeCreditFor(plays, performance);
         }
