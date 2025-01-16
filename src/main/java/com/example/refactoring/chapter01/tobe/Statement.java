@@ -19,13 +19,13 @@ public class Statement {
     }
 
     private int volumeCreditFor(Plays plays, Performance performance) {
-        int volumeCredit = Math.max(performance.getAudience() - 30, 0);
+        int result = Math.max(performance.getAudience() - 30, 0);
 
         if (playFor(plays, performance).getType().equals("comedy")) {
-            volumeCredit += (int) Math.floor((double) performance.getAudience() / 5);
+            result += (int) Math.floor((double) performance.getAudience() / 5);
         }
 
-        return volumeCredit;
+        return result;
     }
 
     private int amountFor(Performance performance, Plays plays) {
