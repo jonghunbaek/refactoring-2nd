@@ -1,0 +1,10 @@
+{
+  "hamlet": {
+    "name": "hamlet",
+    "type": "tragedy"
+  },
+  "othello": {
+    "name": "othello",
+    "type": "tragedy"
+  }
+}

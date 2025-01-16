@@ -1,0 +1,13 @@
+{
+  "customer": "Handler",
+  "performances": [
+    {
+      "playID": "오겜2",
+      "audience": 20
+    },
+    {
+      "playID": "나는솔로",
+      "audience": 20
+    }
+  ]
+}
