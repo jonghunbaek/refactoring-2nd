@@ -9,4 +9,8 @@ public class StatementData {
         this.invoice = invoice;
         this.plays = plays;
     }
+
+    public String getCustomer() {
+        return invoice.getCustomer();
+    }
 }
