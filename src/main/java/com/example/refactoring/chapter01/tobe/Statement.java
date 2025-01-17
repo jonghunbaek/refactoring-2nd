@@ -19,19 +19,24 @@ public class Statement {
         return result.toString();
     }
 
-    private Play playFor(Plays plays, Performance performance) {
-        return plays.get(performance);
+    public String htmlStatement(Invoice invoice, Plays plays) {
+        StatementData data = new StatementData(invoice, plays);
+
+        return renderHtmlText(data);
     }
 
-    public String htmlStatement(Invoice invoice, Plays plays) {
-        return "<h1>청구내역 (고객명: BigCo)</h1>\n" +
-                "<table>\n" +
-                "<tr><th>연극</th><th>좌석수</th><th>금액</th></tr>\n" +
-                "<tr><td>Hamlet</td><td>55석</td><td>$650.00</td></tr>\n" +
-                "<tr><td>As You Like It</td><td>35석</td><td>$580.00</td></tr>\n" +
-                "<tr><td>Othello</td><td>40석</td><td>$500.00</td></tr>\n" +
-                "</table>\n" +
-                "<p>총액: <em>$1,730.00</em></p>\n" +
-                "<p>적립 포인트: <em>47</em>점</p>\n";
+    public String renderHtmlText(StatementData statementData) {
+        StringBuilder result = new StringBuilder(String.format("<h1> 청구내역 (고객명: %s)</h1> \n", statementData.getCustomer()));
+
+        result.append("<table> \n");
+        result.append("<tr><th>연극</th><th>좌석수</th><th>금액</th></tr> \n");
+        for (Performance performance : statementData.getPerformances()) {
+            result.append(String.format("<tr><td>%s</td><td>%d석</td><td>$%d</td></tr>\n",statementData.playFor(performance).getName(), performance.getAudience(), statementData.amountFor(performance)));
+        }
+        result.append("</table>\n");
+
+        result.append(String.format("<p>총액: <em>$%d</em></p> \n", statementData.totalAmount()));
+        result.append(String.format("<p>적립 포인트: <em>%d</em>점</p> \n", statementData.totalVolumeCredits()));
+        return result.toString();
     }
 }

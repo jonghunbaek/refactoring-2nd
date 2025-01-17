@@ -22,7 +22,7 @@ public class StatementTest {
         Statement statement = new Statement();
 
         assertThat(statement.statement(invoice, plays)).isEqualTo("청구내역 (고객명: BigCo)\n" +
-                "hamlet: $650 55석\n" +
+                "Hamlet: $650 55석\n" +
                 "As You Like It: $580 35석\n" +
                 "Othello: $500 40석\n" +
                 "총액: $1730\n" +
@@ -40,11 +40,11 @@ public class StatementTest {
         assertThat(statement.htmlStatement(invoice, plays)).isEqualTo("<h1>청구내역 (고객명: BigCo)</h1>\n" +
                 "<table>\n" +
                 "<tr><th>연극</th><th>좌석수</th><th>금액</th></tr>\n" +
-                "<tr><td>Hamlet</td><td>55석</td><td>$650.00</td></tr>\n" +
-                "<tr><td>As You Like It</td><td>35석</td><td>$580.00</td></tr>\n" +
-                "<tr><td>Othello</td><td>40석</td><td>$500.00</td></tr>\n" +
+                "<tr><td>Hamlet</td><td>55석</td><td>$650</td></tr>\n" +
+                "<tr><td>As You Like It</td><td>35석</td><td>$580</td></tr>\n" +
+                "<tr><td>Othello</td><td>40석</td><td>$500</td></tr>\n" +
                 "</table>\n" +
-                "<p>총액: <em>$1,730.00</em></p>\n" +
+                "<p>총액: <em>$1730</em></p>\n" +
                 "<p>적립 포인트: <em>47</em>점</p>\n");
     }
 
