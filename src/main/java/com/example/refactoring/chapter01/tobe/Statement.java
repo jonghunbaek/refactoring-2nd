@@ -4,10 +4,10 @@ public class Statement {
     public String statement(Invoice invoice, Plays plays) {
         StatementData data = new StatementData(invoice, plays);
 
-        return renderPlainText(data, plays);
+        return renderPlainText(data);
     }
 
-    private String renderPlainText(StatementData data, Plays plays) {
+    private String renderPlainText(StatementData data) {
         StringBuilder result = new StringBuilder(String.format("청구내역 (고객명: %s)\n", data.getCustomer()));
         for (Performance performance : data.getPerformances()) {
             // 청구 내역을 출력한다.
