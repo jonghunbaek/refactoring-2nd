@@ -51,7 +51,7 @@ public class StatementData {
         return result / 100;
     }
 
-    public int totalAmount(Invoice invoice) {
+    public int totalAmount() {
         int result = 0;
 
         for (Performance performance : invoice.getPerformances()) {
