@@ -51,12 +51,12 @@ public class StatementData {
     }
 
     public int totalAmount(Invoice invoice) {
-        int totalAmount = 0;
+        int result = 0;
 
         for (Performance performance : invoice.getPerformances()) {
-            totalAmount += amountFor(performance);
+            result += amountFor(performance);
         }
 
-        return totalAmount;
+        return result;
     }
 }
