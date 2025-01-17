@@ -2,6 +2,10 @@ package com.example.refactoring.chapter01.tobe;
 
 public class Statement {
     public String statement(Invoice invoice, Plays plays) {
+        return renderPlainText(invoice, plays);
+    }
+
+    private String renderPlainText(Invoice invoice, Plays plays) {
         StringBuilder result = new StringBuilder(String.format("청구내역 (고객명: %s)\n", invoice.getCustomer()));
         for (Performance performance : invoice.getPerformances()) {
             // 청구 내역을 출력한다.
