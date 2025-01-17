@@ -4,18 +4,18 @@ public class Statement {
     public String statement(Invoice invoice, Plays plays) {
         StatementData data = new StatementData(invoice, plays);
 
-        return renderPlainText(data, invoice, plays);
+        return renderPlainText(data, plays);
     }
 
-    private String renderPlainText(StatementData data, Invoice invoice, Plays plays) {
+    private String renderPlainText(StatementData data, Plays plays) {
         StringBuilder result = new StringBuilder(String.format("청구내역 (고객명: %s)\n", data.getCustomer()));
         for (Performance performance : data.getPerformances()) {
             // 청구 내역을 출력한다.
             result.append(String.format("%s: $%d %d석\n",playFor(plays, performance).getName(), amountFor(performance, plays) / 100, performance.getAudience()));
         }
 
-        result.append(String.format("총액: $%d\n", totalAmount(invoice, plays) / 100));
-        result.append(String.format("적립 포인트: %d점", totalVolumeCredits(invoice, plays)));
+        result.append(String.format("총액: $%d\n", totalAmount(data.getInvoice(), plays) / 100));
+        result.append(String.format("적립 포인트: %d점", totalVolumeCredits(data.getInvoice(), plays)));
         return result.toString();
     }
 

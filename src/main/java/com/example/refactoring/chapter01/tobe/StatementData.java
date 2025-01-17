@@ -19,4 +19,8 @@ public class StatementData {
     public List<Performance> getPerformances() {
         return invoice.getPerformances();
     }
+
+    public Invoice getInvoice() {
+        return invoice;
+    }
 }
