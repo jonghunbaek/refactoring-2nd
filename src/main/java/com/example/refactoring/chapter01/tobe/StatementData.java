@@ -20,10 +20,6 @@ public class StatementData {
         return invoice.getPerformances();
     }
 
-    public Invoice getInvoice() {
-        return invoice;
-    }
-
     public Play playFor(Performance performance) {
         return plays.get(performance);
     }
