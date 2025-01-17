@@ -2,11 +2,14 @@ package com.example.refactoring.chapter01.tobe;
 
 public class Statement {
     public String statement(Invoice invoice, Plays plays) {
-        int totalAmount = 0;
         StringBuilder result = new StringBuilder(String.format("청구내역 (고객명: %s)\n", invoice.getCustomer()));
         for (Performance performance : invoice.getPerformances()) {
             // 청구 내역을 출력한다.
             result.append(String.format("%s: $%d %d석\n",playFor(plays, performance).getName(), amountFor(performance, plays) / 100, performance.getAudience()));
+        }
+
+        int totalAmount = 0;
+        for (Performance performance : invoice.getPerformances()) {
             totalAmount += amountFor(performance, plays);
         }
 
