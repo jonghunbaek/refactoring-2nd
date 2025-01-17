@@ -14,19 +14,9 @@ public class Statement {
             result.append(String.format("%s: $%d %d석\n", data.playFor(performance).getName(), data.amountFor(performance) / 100, performance.getAudience()));
         }
 
-        result.append(String.format("총액: $%d\n", totalAmount(data.getInvoice(), plays) / 100));
+        result.append(String.format("총액: $%d\n", data.totalAmount(data.getInvoice()) / 100));
         result.append(String.format("적립 포인트: %d점", totalVolumeCredits(data.getInvoice(), plays)));
         return result.toString();
-    }
-
-    private int totalAmount(Invoice invoice, Plays plays) {
-        int totalAmount = 0;
-
-        for (Performance performance : invoice.getPerformances()) {
-            totalAmount += amountFor(performance, plays);
-        }
-
-        return totalAmount;
     }
 
     private int totalVolumeCredits(Invoice invoice, Plays plays) {

@@ -49,4 +49,14 @@ public class StatementData {
         }
         return result;
     }
+
+    public int totalAmount(Invoice invoice) {
+        int totalAmount = 0;
+
+        for (Performance performance : invoice.getPerformances()) {
+            totalAmount += amountFor(performance);
+        }
+
+        return totalAmount;
+    }
 }
