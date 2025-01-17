@@ -47,7 +47,8 @@ public class StatementData {
             default:
                 throw new RuntimeException("알 수 없는 장르");
         }
-        return result;
+
+        return result / 100;
     }
 
     public int totalAmount(Invoice invoice) {

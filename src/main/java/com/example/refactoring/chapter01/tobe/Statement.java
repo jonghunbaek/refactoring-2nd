@@ -11,10 +11,10 @@ public class Statement {
         StringBuilder result = new StringBuilder(String.format("청구내역 (고객명: %s)\n", data.getCustomer()));
         for (Performance performance : data.getPerformances()) {
             // 청구 내역을 출력한다.
-            result.append(String.format("%s: $%d %d석\n", data.playFor(performance).getName(), data.amountFor(performance) / 100, performance.getAudience()));
+            result.append(String.format("%s: $%d %d석\n", data.playFor(performance).getName(), data.amountFor(performance), performance.getAudience()));
         }
 
-        result.append(String.format("총액: $%d\n", data.totalAmount(data.getInvoice()) / 100));
+        result.append(String.format("총액: $%d\n", data.totalAmount(data.getInvoice())));
         result.append(String.format("적립 포인트: %d점", totalVolumeCredits(data.getInvoice(), plays)));
         return result.toString();
     }
