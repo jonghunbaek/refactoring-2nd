@@ -61,7 +61,7 @@ public class StatementData {
         return result;
     }
 
-    public int totalVolumeCredits(Invoice invoice) {
+    public int totalVolumeCredits() {
         int volumeCredit = 0;
 
         for (Performance performance : invoice.getPerformances()) {

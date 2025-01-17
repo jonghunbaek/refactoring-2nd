@@ -15,7 +15,7 @@ public class Statement {
         }
 
         result.append(String.format("총액: $%d\n", data.totalAmount()));
-        result.append(String.format("적립 포인트: %d점", data.totalVolumeCredits(data.getInvoice())));
+        result.append(String.format("적립 포인트: %d점", data.totalVolumeCredits()));
         return result.toString();
     }
 
