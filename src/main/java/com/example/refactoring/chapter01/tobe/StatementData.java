@@ -23,4 +23,8 @@ public class StatementData {
     public Invoice getInvoice() {
         return invoice;
     }
+
+    public Play playFor(Performance performance) {
+        return plays.get(performance);
+    }
 }

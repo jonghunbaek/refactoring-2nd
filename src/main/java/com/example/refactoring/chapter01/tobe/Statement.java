@@ -11,7 +11,7 @@ public class Statement {
         StringBuilder result = new StringBuilder(String.format("청구내역 (고객명: %s)\n", data.getCustomer()));
         for (Performance performance : data.getPerformances()) {
             // 청구 내역을 출력한다.
-            result.append(String.format("%s: $%d %d석\n",playFor(plays, performance).getName(), amountFor(performance, plays) / 100, performance.getAudience()));
+            result.append(String.format("%s: $%d %d석\n", data.playFor(performance).getName(), amountFor(performance, plays) / 100, performance.getAudience()));
         }
 
         result.append(String.format("총액: $%d\n", totalAmount(data.getInvoice(), plays) / 100));
