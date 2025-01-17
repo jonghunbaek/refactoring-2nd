@@ -9,7 +9,7 @@ public class Statement {
 
     private String renderPlainText(StatementData data, Invoice invoice, Plays plays) {
         StringBuilder result = new StringBuilder(String.format("청구내역 (고객명: %s)\n", data.getCustomer()));
-        for (Performance performance : invoice.getPerformances()) {
+        for (Performance performance : data.getPerformances()) {
             // 청구 내역을 출력한다.
             result.append(String.format("%s: $%d %d석\n",playFor(plays, performance).getName(), amountFor(performance, plays) / 100, performance.getAudience()));
         }

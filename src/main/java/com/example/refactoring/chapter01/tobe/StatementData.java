@@ -1,5 +1,7 @@
 package com.example.refactoring.chapter01.tobe;
 
+import java.util.List;
+
 public class StatementData {
 
     private Invoice invoice;
@@ -12,5 +14,9 @@ public class StatementData {
 
     public String getCustomer() {
         return invoice.getCustomer();
+    }
+
+    public List<Performance> getPerformances() {
+        return invoice.getPerformances();
     }
 }
