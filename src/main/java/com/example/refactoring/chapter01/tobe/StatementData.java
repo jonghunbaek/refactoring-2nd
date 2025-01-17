@@ -60,4 +60,24 @@ public class StatementData {
 
         return result;
     }
+
+    public int totalVolumeCredits(Invoice invoice) {
+        int volumeCredit = 0;
+
+        for (Performance performance : invoice.getPerformances()) {
+            volumeCredit += volumeCreditFor(performance);
+        }
+
+        return volumeCredit;
+    }
+
+    private int volumeCreditFor(Performance performance) {
+        int result = Math.max(performance.getAudience() - 30, 0);
+
+        if (playFor(performance).getType().equals("comedy")) {
+            result += (int) Math.floor((double) performance.getAudience() / 5);
+        }
+
+        return result;
+    }
 }
