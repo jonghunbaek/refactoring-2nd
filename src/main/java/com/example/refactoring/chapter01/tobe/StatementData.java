@@ -48,13 +48,9 @@ public class StatementData {
     }
 
     public int totalAmount() {
-        int result = 0;
-
-        for (Performance performance : invoice.getPerformances()) {
-            result += amountFor(performance);
-        }
-
-        return result;
+        return invoice.getPerformances().stream()
+                .mapToInt(this::amountFor)
+                .sum();
     }
 
     public int totalVolumeCredits() {
