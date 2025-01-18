@@ -1,47 +1,44 @@
 package com.example.refactoring.chapter01.tobe;
 
 public class Statement {
-    public String statement(Invoice invoice, Plays plays) throws Exception {
-        int totalAmount = 0;
-        int volumeCredit = 0;
-        StringBuilder result = new StringBuilder(String.format("청구내역 (고객명: %s)\n", invoice.getCustomer()));
-        for (Performance performance : invoice.getPerformances()) {
-            Play play = plays.get(performance);
-            int thisAmount = 0;
+    public String statement(Invoice invoice, Plays plays) {
+        StatementData data = new StatementData(invoice, plays);
 
-            switch (play.getType()) {
-                case "tragedy":
-                    thisAmount = 40000;
-                    if (performance.getAudience() > 30) {
-                        thisAmount += 1000 * (performance.getAudience() - 30);
-                    }
-                    break;
-                case "comedy":
-                    thisAmount = 30000;
-                    if (performance.getAudience() > 20) {
-                        thisAmount += 10000 + 500 * (performance.getAudience() - 20);
-                    }
-                    thisAmount += 300 * performance.getAudience();
-                    break;
-                default:
-                    throw new Exception("알 수 없는 장르");
-            }
+        return renderPlainText(data);
+    }
 
-            // 포인트를 적립한다.
-            volumeCredit += Math.max(performance.getAudience() - 30, 0);
-
-            // 희극 관객 5명마다 추가 포인트를 제공핟나.
-            if (play.getType().equals("comedy")) {
-                volumeCredit += Math.floor(performance.getAudience() / 5);
-            }
-
+    private String renderPlainText(StatementData data) {
+        StringBuilder result = new StringBuilder(String.format("청구내역 (고객명: %s)\n", data.getCustomer()));
+        for (Performance performance : data.getPerformances()) {
             // 청구 내역을 출력한다.
-            result.append(String.format("%s: $%d %d석\n",play.getName(), thisAmount / 100, performance.getAudience()));
-            totalAmount += thisAmount;
+            result.append(String.format("%s: $%d %d석\n", data.playFor(performance).getName(), data.amountFor(performance) / 100, performance.getAudience()));
         }
 
-        result.append(String.format("총액: $%d\n",totalAmount / 100));
-        result.append(String.format("적립 포인트: %d점", volumeCredit));
+        result.append(String.format("총액: $%d\n", data.totalAmount() / 100));
+        result.append(String.format("적립 포인트: %d점", data.totalVolumeCredits()));
+        return result.toString();
+    }
+
+    public String htmlStatement(Invoice invoice, Plays plays) {
+        StatementData data = new StatementData(invoice, plays);
+
+        return renderHtmlText(data);
+    }
+
+    public String renderHtmlText(StatementData data) {
+        StringBuilder result = new StringBuilder();
+        result.append(String.format("<h1>청구 내역 (고객명: %s)</h1>\n", data.getCustomer()));
+
+        result.append("<table>\n");
+        result.append("<tr><th>연극</th><th>좌석 수</th><th>금액</th></tr>\n");
+        for(Performance performance : data.getPerformances()) {
+            result.append(String.format("<tr><td>%s</td><td>%d석</td>", data.playFor(performance).getName(), performance.getAudience()));
+            result.append(String.format("<td>$%d</td></tr>\n", data.amountFor(performance) / 100));
+        }
+        result.append("</table>\n");
+
+        result.append(String.format("<p>총액: <em>$%d</em></p>\n", data.totalAmount() / 100));
+        result.append(String.format("<p>적립 포인트: <em>%d점</em></p>\n", data.totalVolumeCredits()));
         return result.toString();
     }
 }

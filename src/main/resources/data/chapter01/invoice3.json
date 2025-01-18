@@ -1,0 +1,13 @@
+{
+  "customer": "Chandler",
+  "performances": [
+    {
+      "playID": "hamlet",
+      "audience": 30
+    },
+    {
+      "playID": "othello",
+      "audience": 30
+    }
+  ]
+}
