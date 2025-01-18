@@ -1,6 +1,6 @@
 package com.example.refactoring.chapter01.tobe;
 
-public class PerformanceCalculator {
+public abstract class PerformanceCalculator {
 
     protected Performance performance;
     protected Play play;
@@ -10,9 +10,7 @@ public class PerformanceCalculator {
         this.play = play;
     }
 
-    public int amountFor() {
-        return 0;
-    }
+    public abstract int amountFor();
 
     public int volumeCreditFor() {
         return Math.max(performance.getAudience() - 30, 0);
