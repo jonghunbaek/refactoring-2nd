@@ -42,12 +42,7 @@ public class StatementData {
     }
 
     private int volumeCreditFor(Performance performance) {
-        int result = Math.max(performance.getAudience() - 30, 0);
-
-        if (playFor(performance).getType().equals("comedy")) {
-            result += (int) Math.floor((double) performance.getAudience() / 5);
-        }
-
-        return result;
+        return new PerformanceCalculator(performance, playFor(performance))
+                .volumeCreditFor();
     }
 }
