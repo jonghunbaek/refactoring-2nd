@@ -2,8 +2,8 @@ package com.example.refactoring.chapter01.tobe;
 
 public class PerformanceCalculator {
 
-    private Performance performance;
-    private Play play;
+    protected Performance performance;
+    protected Play play;
 
     public PerformanceCalculator(Performance performance, Play play) {
         this.performance = performance;
