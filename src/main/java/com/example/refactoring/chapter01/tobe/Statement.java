@@ -25,18 +25,20 @@ public class Statement {
         return renderHtmlText(data);
     }
 
-    public String renderHtmlText(StatementData statementData) {
-        StringBuilder result = new StringBuilder(String.format("<h1> 청구내역 (고객명: %s)</h1> \n", statementData.getCustomer()));
+    public String renderHtmlText(StatementData data) {
+        StringBuilder result = new StringBuilder();
+        result.append(String.format("<h1>청구 내역 (고객명: %s)</h1>\n", data.getCustomer()));
 
-        result.append("<table> \n");
-        result.append("<tr><th>연극</th><th>좌석수</th><th>금액</th></tr> \n");
-        for (Performance performance : statementData.getPerformances()) {
-            result.append(String.format("<tr><td>%s</td><td>%d석</td><td>$%d</td></tr>\n",statementData.playFor(performance).getName(), performance.getAudience(), statementData.amountFor(performance)));
+        result.append("<table>\n");
+        result.append("<tr><th>연극</th><th>좌석 수</th><th>금액</th></tr>\n");
+        for(Performance performance : data.getPerformances()) {
+            result.append(String.format("<tr><td>%s</td><td>%d석</td>", data.playFor(performance).getName(), performance.getAudience()));
+            result.append(String.format("<td>$%d</td></tr>\n", data.amountFor(performance)));
         }
         result.append("</table>\n");
 
-        result.append(String.format("<p>총액: <em>$%d</em></p> \n", statementData.totalAmount()));
-        result.append(String.format("<p>적립 포인트: <em>%d</em>점</p> \n", statementData.totalVolumeCredits()));
+        result.append(String.format("<p>총액: <em>$%d</em></p>\n", data.totalAmount()));
+        result.append(String.format("<p>적립 포인트: <em>%d점</em></p>\n", data.totalVolumeCredits()));
         return result.toString();
     }
 }
