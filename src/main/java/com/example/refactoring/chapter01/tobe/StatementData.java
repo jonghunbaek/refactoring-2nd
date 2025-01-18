@@ -44,7 +44,7 @@ public class StatementData {
     }
 
     private int volumeCreditFor(Performance performance) {
-        return new PerformanceCalculator(performance, playFor(performance))
+        return create(performance, playFor(performance))
                 .volumeCreditFor();
     }
 }
