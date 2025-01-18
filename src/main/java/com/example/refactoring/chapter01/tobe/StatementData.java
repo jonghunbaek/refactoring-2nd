@@ -54,13 +54,9 @@ public class StatementData {
     }
 
     public int totalVolumeCredits() {
-        int volumeCredit = 0;
-
-        for (Performance performance : invoice.getPerformances()) {
-            volumeCredit += volumeCreditFor(performance);
-        }
-
-        return volumeCredit;
+        return invoice.getPerformances().stream()
+                .mapToInt(this::volumeCreditFor)
+                .sum();
     }
 
     private int volumeCreditFor(Performance performance) {
