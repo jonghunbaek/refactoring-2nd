@@ -2,6 +2,8 @@ package com.example.refactoring.chapter01.tobe;
 
 import java.util.List;
 
+import static com.example.refactoring.chapter01.tobe.PerformanceCalculatorFactory.*;
+
 public class StatementData {
 
     private Invoice invoice;
@@ -25,7 +27,7 @@ public class StatementData {
     }
 
     public int amountFor(Performance performance) {
-        return new PerformanceCalculator(performance, playFor(performance))
+        return create(performance, playFor(performance))
                 .amountFor();
     }
 
