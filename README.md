@@ -3,4 +3,4 @@
 ---
 
 ### 목차
-- [Chapter01 - 리팩터링: 첫 번째 예시](docs/Chapter01.md)
+- [Chapter01 - 리팩터링: 첫 번째 예시](docs/CHAPTER01)
