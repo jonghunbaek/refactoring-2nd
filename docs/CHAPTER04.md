@@ -167,6 +167,47 @@ void shortfallTest() {
 이번엔 클래스의 내부 기능에서 오류가 생길 수 있는 조건을 모두 테스트 해보자.
 모든 public 메서드를 테스트 하기보다는 **위험 요인을 중심으로 작성**하자.
 테스트의 목적은 **현재 혹은 향후에 발생하는 버그를 찾은 것에 있음**을 잊지 말자.
+```java
+@DisplayName("총 수익 계산 결과를 테스트한다.")
+@Test
+void profitTest() {
+    Province province = new Province(reader.readJsonFile("data/chapter04/data.json", ProvinceData.class));
 
+    assertThat(province.getProfit()).isEqualTo(230);
+}
+```
+일반 코드와 마찬가지로 테스트 코드에서도 중복은 의심해봐야 한다. 여기선 픽스처가 중복되니 한 곳으로 옮겨 중복을 제거해보자.
+단, **테스트 간 상호작용할 수 있는 공유 픽스처는 절대 금지**다. 즉, 하나의 테스트 수행 과정은 다른 테스트에 영향을 줘선 안된다.
+이는 테스트를 실행하는 순서에 따라 결과가 달라질 수도 있어 버그를 잡기 힘드어지는 결과를 초래할 수 있다. 
 
+대신 beforeEach와 같은 구문을 활용해 해결해보자.
+```java
+public class ProvinceTest {
+
+    private JsonReader reader;
+    private ProvinceData provinceData;
+
+    @BeforeEach
+    void setUp() {
+        reader = new JsonReader();
+        provinceData = reader.readJsonFile("data/chapter04/data.json", ProvinceData.class);
+    }
+
+    @DisplayName("생산 부족분 계산 결과를 테스트한다.")
+    @Test
+    void shortfallTest() {
+        Province province = new Province(provinceData);
+
+        assertThat(province.getShortfall()).isEqualTo(5);
+    }
+
+    @DisplayName("총 수익 계산 결과를 테스트한다.")
+    @Test
+    void profitTest() {
+        Province province = new Province(provinceData);
+
+        assertThat(province.getProfit()).isEqualTo(230);
+    }
+}
+```
 ## 2. 리뷰
