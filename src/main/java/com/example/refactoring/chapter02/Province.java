@@ -1,6 +1,9 @@
 package com.example.refactoring.chapter02;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Province {
 
@@ -21,7 +24,7 @@ public class Province {
     private List<Producer> toProducers(ProvinceData data) {
         return data.getProducers().stream()
                 .map(producerData -> new Producer(this, producerData))
-                .toList();
+                .collect(Collectors.toList());
     }
 
     private int sumProduction() {
@@ -47,20 +50,17 @@ public class Province {
     }
 
     private int getDemandCost() {
-//        get demandCost() {
-//            let remainigDemand = this.demand;
-//            let result = 0;
-//            this.producers
-//                    .sort((a,b) => a.cost - b.cost)
-//                    .forEach(p => {
-//                        const contribution = Math.min(remainingDemand, p.production);
-//                        remainingDemand -= contribution;
-//                        result += contribution * p.cost;
-//                    });
-//            return result;
-//        }
+        producers.sort(Comparator.comparing(Producer::getCost));
 
-        return 0;
+        int remainingDemand = this.demand;
+        int result = 0;
+        for (Producer producer : producers) {
+            int contribution = Math.min(remainingDemand, producer.getProduction());
+            remainingDemand -= contribution;
+            result += contribution;
+        }
+
+        return result;
     }
 
     public String getName() {
