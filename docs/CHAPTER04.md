@@ -210,4 +210,26 @@ public class ProvinceTest {
     }
 }
 ```
+### 4.5 픽스처 수정하기
+책에선 하나의 테스트만 수행하라고 하지만 package org.junit.jupiter.api.Assertions의 assertAll()을 활용하면 실패 시 복수의 테스트 결과를 확인할 수 있다.
+```java
+@DisplayName("생산 부족분 계산 결과, 총 수익 계산 결과의 값을 픽스처 데이터를 수정한 상태에서 테스트한다.")
+@Test
+void fixtureTest() {
+    Province province = new Province(provinceData);
+    province.getProducers().get(0).setProduction("20");
+    int shortfall = province.getShortfall();
+    int profit = province.getProfit();
+
+    Assertions.assertAll(
+            () -> assertThat(shortfall).isEqualTo(-6),
+            () -> assertThat(profit).isEqualTo(292)
+    );
+}
+```
+### 4.6 경계 조건 검사하기
+테스트를 할 때 중요한 점은 해피 케이스뿐만 아니라 엣지 케이스, 즉 실패 케이스에 더 집중하는 것이 좋다.
+이러한 실패 케이스는 보통 경계값에서 많이 발생하니 주의 깊게 살펴보자.
+### 4.7 끝나지 않은 여정
+
 ## 2. 리뷰
