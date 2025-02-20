@@ -1,6 +1,5 @@
-package com.example.refactoring.chapter02;
+package com.example.refactoring.chapter04;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -57,7 +56,7 @@ public class Province {
         for (Producer producer : producers) {
             int contribution = Math.min(remainingDemand, producer.getProduction());
             remainingDemand -= contribution;
-            result += contribution;
+            result += contribution * producer.getCost();
         }
 
         return result;

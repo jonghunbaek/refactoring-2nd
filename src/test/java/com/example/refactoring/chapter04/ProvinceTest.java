@@ -1,8 +1,6 @@
 package com.example.refactoring.chapter04;
 
 import com.example.refactoring.JsonReader;
-import com.example.refactoring.chapter02.Province;
-import com.example.refactoring.chapter02.ProvinceData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

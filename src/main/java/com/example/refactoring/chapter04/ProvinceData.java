@@ -1,4 +1,4 @@
-package com.example.refactoring.chapter02;
+package com.example.refactoring.chapter04;
 
 import java.util.List;
 
