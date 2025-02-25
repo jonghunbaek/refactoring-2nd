@@ -1,4 +1,4 @@
-package com.example.refactoring.chapter06;
+package com.example.refactoring.chapter06.extractfunction1;
 
 public class Order {
 
