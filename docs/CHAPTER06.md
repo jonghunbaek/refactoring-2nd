@@ -184,6 +184,7 @@ public class Order {
 6. 임시로 설정한 새로운 함수의 이름을 원래 함수 이름으로 변경한다.
 7. 테스트한다.
 
+## 예시
 ```java
 public class Refactoring {
     
@@ -200,4 +201,54 @@ public class Refactoring {
 }
 ```
 # 6.6 변수 캡슐화하기
+함수는 데이터보다 다루기가 수월하다. 반대로 데이터는 다루기가 까다로운데, **데이터를 참조하는 모든 부분을 한 번에 바꿔야 코드가 제대로 작동하기 때문이다.**
+특히 유효 범위가 넓어질수록 다루기가 힘들어지는데, 전역 변수가 대표적인 예시다.
+
+범위가 넓은 데이터를 옮길 때는 먼저 그 **데이터로의 접근을 독접하는 함수를 만드는 식으로 캡슐화 하는 것**이 가장 좋은 방법일 때가 많다.
+이를 통해 자주 사용하는 데이터에 대한 결합도가 높아지는 일을 막을 수 있다. 
+
+불변 데이터는 가변 데이터보다 캡슐화할 이유가 적다. 데이터가 변경될 일이 없어 별도 검증 로직이 필요하지 않기 때문이다. 또한 불변 데이터는 옮길 필요 없이 그냥 복제하면 된다.
+
+## 절차
+1. 변수로의 접근과 갱신을 전담하는 캡슐화 함수를 만든다.
+2. 정적 검사를 수행한다.
+3. 변수를 직접 참조하던 부분을 모두 캡슐화 함수를 호출하도록 변겨안다.(변경마다 테스트)
+4. 변수의 접근 범위를 제한한다. 
+5. 테스트한다.
+6. 변수 값이 레코드라면 **레코드 캡슐화하기**(7.1)를 고려해본다.
+
 ## 예시
+```java
+public class DataRefactoring {
+
+    private Map<String, String> defaultOwner;
+
+    public DataRefactoring() {
+        defaultOwner = new HashMap<>();
+        defaultOwner.put("firstName", "마틴");
+        defaultOwner.put("lastName", "파울러");
+    }
+
+    public void setDefaultOwner(Map<String, String> defaultOwner) {
+        this.defaultOwner = defaultOwner;
+    }
+
+    public Map<String, String> getDefaultOwner() {
+        return this.defaultOwner;
+    }
+}
+
+public class Refactoring {
+
+  public static void main(String[] args) {
+    Spaceship spaceship = new Spaceship(new Owner(new DataRefactoring().getDefaultOwner()));
+  }
+}
+```
+캡슐화 기법으로 데이터 구조로의 참조를 캠슐화하면 그 구조로의 접근이나 구조 자체를 다시 대입하는 행위는 제어할 수 있다. 하지만 **필드 값을 변경하는 일은 제어할 수 없다.**
+기본 캡슐화 기법은 데이터 항목을 참조하는 부분만 캡슐화한다. 만약 필드 값을 변경하는 행위까지 제어하고 싶다면 두 가지 방법이 있다.
+- 값을 바꿀수 없게 만들기(getter가 데이터의 복제본을 반환하도록 수정)
+  - 단, 원본을 공유해서 변경해야 하는 케이스가 존재할 수 있음
+- 레코드 캡슐화 하기로 변경 못하도록 생성
+
+단, **복제본 만들기와 클래스로 감싸는 방식은 레코드 구조에서 깊이가 1인 속성들까지만 효과**가 있다. 더 깊이 들어가면 복제본과 객체 래핑 단계가 더 늘어나게 된다.
