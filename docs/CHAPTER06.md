@@ -252,3 +252,55 @@ public class Refactoring {
 - 레코드 캡슐화 하기로 변경 못하도록 생성
 
 단, **복제본 만들기와 클래스로 감싸는 방식은 레코드 구조에서 깊이가 1인 속성들까지만 효과**가 있다. 더 깊이 들어가면 복제본과 객체 래핑 단계가 더 늘어나게 된다.
+
+# 6.7 변수 이름 바꾸기
+변수의 이름은 그 사용 범위에 영향을 많이 받는다. 특히, 함수 호출 한 번으로 끝나지 않고 값이 영속되는 필드라면 더욱 신경써야 한다.
+
+## 절차
+1. 폭넓게 쓰이는 변수라면 변수 캡슐화하기를 고려한다.
+2. 이름을 바꿀 변수를 참조하는 곳을 모두 찾아서 하나씩 변경한다.
+3. 테스트한다.
+
+인텔리제이(window 기준)에선 shift+f6으로 변수의 이름을 한 번에 바꿀 수 있다. 
+
+# 6.8 매개변수 객체 만들기
+데이터 항목 여러 개가 이 함수에서 저 함수로 함께 몰려다니는 경우 하나의 데이터 구조로 묶어주는 것이 유리하다. 
+데이터 간의 관계를 명확히 만들고, 매개 변수가 줄어들며 코드를 더 근본적으로 바꿔주는 장점을 얻을 수 있기 때문이다.
+
+## 절차
+1. 적당한 데이터 구조가 없다면 새로 만든다. 
+2. 테스트한다.
+3. 함수 선언 바꾸기로 새 데이터 구조를 매개변수로 추가한다.
+4. 테스트한다.
+5. 함수 호출 시 새로운 데이터 구조 인스턴스를 넘기도록 수정한다. 
+6. 기존 매개변수를 사용하던 코드를 새 데이터 구조의 원소를 사용하도록 바꾼다.
+7. 변경이 완료되면 기존 매개변수를 제거하고 테스트한다.
+
+## 예시
+```java
+public class Refactoring {
+
+    public static void main(String[] args) {
+        Machine machine = new Machine();
+        Station station = new Station("ZB1");
+        OperationPlan operationPlan = new OperationPlan();
+        NumberRange numberRange = new NumberRange(operationPlan.getTemperatureFloor(), operationPlan.getTemperatureCeiling());
+        List<Reading> alerts = machine.readingsOutsideRangeRefactoring(station, numberRange);
+    }
+}
+
+public class Machine {
+
+  public List<Reading> readingsOutsideRange(Station station, int min, int max) {
+    return station.getReadings().stream()
+            .filter(reading -> reading.getTemp() < min || reading.getTemp() > max)
+            .toList();
+  }
+
+  public List<Reading> readingsOutsideRangeRefactoring(Station station, NumberRange range) {
+    return station.getReadings().stream()
+            .filter(reading -> reading.getTemp() < range.getMin() || reading.getTemp() > range.getMax())
+            .toList();
+  }
+}
+```
