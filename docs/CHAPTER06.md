@@ -338,5 +338,80 @@ Java에선 함수만 따로 존재할 수 없다. 다만 여러 객체에서 비
 3. 테스트한다.
 4. 나머지 함수도 마찬가지로 진행한다. 
 
-## 예시 
+## 예시
 6.9와 비슷한 케이스다. 마찬가지로 비슷한 로직을 하나의 변환 함수에 모으는 것이 핵심이다. 클래스 모으기와의 차이점에 유념하여 사용하자.
+
+# 6.11 단계 쪼개기
+서로 다른 두 대상을 한꺼번에 다루는 코드는 각각을 별개의 모듈로 나누는 편이 좋다.
+이러한 방식 중 가장 간편한 방법은 동작을 연이은 두 단계로 쪼개는 것이다. 입력이 처리 로직에 적합하지 않은 경우, 본 작업 전에 입력 값을 다루기 편한 형태로 가공한다.
+대표적인 예시는 바로 컴파일러다. 컴파일러는 작업을 여러 단계로 분리하여 순차적으로 실행한다. 텍스트를 토큰화하고, 파싱하여 구문 트리를 만들고, 구문 트리를 변환한다. 이를 통해 목적 코드를 생성한다. 
+이렇듯 단계를 쪼개는 기법은 주로 규모가 큰 소프트웨어에 적용된다.
+
+## 절차
+1. 두 번째 단계에 해당하는 코드를 독립 함수로 추출한다.
+2. 테스트한다.
+3. 중간 데이터 구조를 만들어 앞에서 추출한 함수의 인수로 추가한다.
+4. 테스트한다.
+5. 추출한 두 번째 단계 함수의 매개변수를 하나씩 검토한다. 그중 첫 번째 단계에서 사용되는 것은 중간 데이터 구조로 옮긴다. 하나씩 옮길 때마다 테스트한다.
+6. 첫 번째 단계 코드를 함수로 추출하면서 중간 데이터 구조를 반환하도록 만든다.
+
+## 예시
+책에선 두 가지 예시를 소개하는데, 두 번째 자바 코드 예시만 작성해보자.
+```java
+public class Refactoring {
+
+    public static void main(String[] args) {
+        try {
+            System.out.println(run(args));
+        } catch (Exception e) {
+            System.err.println(e);
+            System.exit(1);
+        }
+    }
+
+    static long run(String[] args) throws IOException {
+        return countOrders(new CommandLine(args));
+    }
+
+    private static long countOrders(CommandLine commandLine) throws IOException {
+        Order[] orders = jsonToOrders(Paths.get(commandLine.getFileName()).toFile());
+
+        return commandLine.isOnlyCountReady() ? countWhenReady(orders) : orders.length;
+    }
+
+    private static Order[] jsonToOrders(File input) throws IOException {
+        return new ObjectMapper()
+                .readValue(input, Order[].class);
+    }
+
+    private static long countWhenReady(Order[] orders) {
+        return Stream.of(orders)
+                .filter(o -> "ready".equals(o.getStatus()))
+                .count();
+    }
+}
+
+public class CommandLine {
+
+  private String[] args;
+
+  public CommandLine(String[] args) {
+    validateArgsLength(args);
+    this.args = args;
+  }
+
+  private void validateArgsLength(String[] args) {
+    if (args.length == 0) {
+      throw new RuntimeException("파일명을 입력하세요.");
+    }
+  }
+
+  public String getFileName() {
+    return args[args.length - 1];
+  }
+
+  public boolean isOnlyCountReady() {
+    return Arrays.asList(args).contains("-r");
+  }
+}
+```
