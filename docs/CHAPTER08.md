@@ -161,3 +161,103 @@ public class CustomerContract {
 예외가 있다면 기존 함수의 코드를 수정하더라도 인라인 코드의 동작이 바꾸지 않아야 할 경우 뿐이다.
 
 # 8.6 문장 슬라이드 하기
+관련된 코드들이 가까이 모여 있다면 이해하기가 더 쉽다. 즉, 해당 리팩터링 또한 다른 리팩터링의 준비 단계로 자주 행해진다. 
+코드 조각을 슬라이드할 때는 두 가지를 확인해야 한다. 무엇을 슬라이드할지와 슬라이드할 수 있는지 여부다. 무엇을 슬라이드할지는 맥락과 관련이 깊다. 
+슬라이드의 가능 여부는 슬라이드할 코드 자체와 그 코드가 건너뛰어야 할 코드를 모두 살펴 봐야 한다. 
+
+## 절차
+1. 코드를 이동할 목표 위치를 찾는다. 코드 조각의 원래 위치와 목표 위치 사이의 코드들을 훑어보면서 코드를 이동할 경우 동작이 달라지는지 확인한다. 아래와 같은 경우엔 문장 슬라이드를 포기한다. 
+   1. 코드 조각에서 참조하는 요소를 선언하는 문장 앞으로는 이동할 수 없다.
+   2. 코드 조각을 참조하는 요소의 뒤로는 이동할 수 없다.
+   3. 코드 조각에서 참조하는 요소를 수정하는 문장을 건너뛰어 이동할 수 없다.
+   4. 코드 조각이 수정하는 요소를 참조하는 요소를 건너뛰어 이동할 수 없다.
+2. 코드를 원래 위치에서 잘라내어 목표 위치에 붙여 넣는다.
+3. 테스트한다.
+
+## 예시
+문장 슬라이드는 구현 자체는 간단하지만 부수 효과를 배제할 수 없기 때문에 그 주변을 살피는 것이 매우 중요하다. 
+저자는 이러한 부수 효과를 없애기 위한 일환으로 명령-질의 분리 원칙을 지키며 작업한다. 이를 통해 자신이 작성한 함수엔 부수 효과가 없음을 빠르게 알 수 있다.
+문장 슬라이드가 안전한지를 판단하려면 관련된 연산이 무엇이고 어떻게 구성되는지 완벽히 이해해야 한다. 그렇기에 더욱더 테스트의 중요성이 커진다.
+
+# 8.7 반복문 쪼개기
+종종 반복문 하나에서 두 가지 일을 수행하는데, 이러한 경우에 적용할 수 있는 리팩터링이다. 
+반복문 쪼개기는 보통 함수 추출하기와 한 세트로 수행되는 일이 잦다. 
+
+## 절차
+1. 반복문을 복제하여 두 개로 만든다.
+2. 반복문이 중복되어 생기는 부수효과를 파악해서 제거한다.
+3. 테스트한다.
+4. 완료됐으면, 각 반복문을 함수로 추출할지 고민해본다.
+
+## 예시
+```java
+public class Sample {
+
+    public static String calculateStats(List<Person> people) {
+        int totalSalary = getTotalSalary(people);
+        int youngest = getYoungest(people);
+
+        return "최연소: " + youngest + ", 총 급여: " + totalSalary;
+    }
+
+    private static int getTotalSalary(List<Person> people) {
+        return people.stream()
+                .mapToInt(Person::getSalary)
+                .sum();
+    }
+
+    private static int getYoungest(List<Person> people) {
+        int youngest = (people.isEmpty()) ? Integer.MAX_VALUE : people.get(0).getAge();
+        for (Person p : people) {
+            if (p.getAge() < youngest) youngest = p.getAge();
+        }
+        return youngest;
+    }
+
+    private static int getYoungest2(List<Person> people) {
+        return people.stream()
+                .mapToInt(Person::getAge)
+                .min()
+                .orElse(Integer.MAX_VALUE);
+    }
+}
+```
+
+# 8.8 반복문을 파이프라인으로 바꾸기
+로직을 파이프라인으로 표현하면 이해하기 훨씬 쉬워진다. 그러니 대부분의 경우 파이프라인으로 대체하는 편이 좋다.
+
+## 절차
+1. 반복문에서 사용하는 컬렉션을 가리키는 변수를 하나 만든다.
+2. 반복문의 첫 줄부터 시작해서, 각각의 단위 행위를 적절한 컬렉션 파이프라인 연산으로 대체한다. 이 때 각 연산은 반복문 컬렉션 변수에서 시작해 이전 연산의 결과를 기초로 수행된다.
+3. 반복문의 모든 동작을 대체했다면 반복문 자체를 지운다.
+
+```java
+public class Refactoring {
+
+    public List<Information> acquireData(String input) {
+        String[] lines = input.split("\\n");
+        return Arrays.stream(lines)
+                .skip(1)
+                .filter(line -> !line.isBlank())
+                .map(line -> line.split(","))
+                .filter(record -> record[1].trim().equals("India"))
+                .map(record -> new Information(record[0].trim(), record[1].trim()))
+                .toList();
+    }
+
+    static class Information {
+        private String city;
+        private String phone;
+
+        public Information(String city, String phone) {
+            this.city = city;
+            this.phone = phone;
+        }
+    }
+}
+```
+
+# 8.9 죽은 코드 제거하기
+사용되지 않는 코드가 있다면 그 소프트웨어의 동작을 이해하는 데는 커다란 걸림돌이 될 수 있다. 
+이러한 코드들은 절대 호출되지 않으니 안심해도 좋다라는 신호를 주진 않는다. 
+또한 버전 관리 시스템이 존재하니 이젠 주석처리하지 말고 죽은 코드를 제거하자.
