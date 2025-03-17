@@ -9,3 +9,4 @@
 - [Chapter04 - 테스트 구축하기](docs/CHAPTER04.md)
 - [Chapter06 - 기본적인 리팩터링](docs/CHAPTER06.md)
 - [Chapter07 - 캡슐화](docs/CHAPTER07.md)
+- [Chapter08 - 기능 이동](docs/CHAPTER08.md)
