@@ -10,3 +10,4 @@
 - [Chapter06 - 기본적인 리팩터링](docs/CHAPTER06.md)
 - [Chapter07 - 캡슐화](docs/CHAPTER07.md)
 - [Chapter08 - 기능 이동](docs/CHAPTER08.md)
+- [Chapter09 - 데이터 조직화](docs/CHAPTER09.md)
