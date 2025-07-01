@@ -63,3 +63,37 @@ public class Refactoring {
 ```
 
 # 10.3 중첩 조건문을 보호 구문으로 바꾸기
+조건문을 통한 분기는 다음 두 가지 경우로 나뉜다.
+- true, false인 경우 모두 정상 동작
+- 둘 중 하나만 정상 동작
+
+첫 번째 경우라면 if-else를 쓰는 편이 좋다.
+하지만 두 번째 경우라면 비정상 동작하는 조건을 먼저 조건문으로 검증한 다음 함수를 종료하는 편이 좋다. 이를 보호 구문이라 한다.
+
+보호 구문을 사용하는 핵심은 의도를 부각하는 데 있다. 보호 구문은 비정상 동작하는 경우에 대해 검증하므로 '이건 이 함수의 핵심이 아니므로 조치를 취하고 함수를 빠져나올 것'이라고 말하는 것과 같다.
+
+## 절차
+1. 교체해야 할 조건 중 가장 바깥 것을 선택해 보호 구문으로 바꾼다.
+2. 테스트
+3. 1, 2 과정 반복
+4. 모든 보호 구문이 같은 결과를 반환한다면 보호 구문들의 조건식을 통합한다.
+
+## 예시
+```java
+public class Refactoring {
+
+    public Result payAmount(Employee employee) {
+        if (employee.isSeparated()) {
+            return new Result(0, "SEP");
+        }
+        
+        if (employee.isRetired()) {
+            return new Result(0, "RET");
+        } 
+        
+        // 급여 계산 로직
+        return new Result();
+    }
+}
+```
+이외에도 조건식을 반대로 만들어 early return 하는 방법도 존재한다.
