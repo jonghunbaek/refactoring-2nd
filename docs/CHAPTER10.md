@@ -97,3 +97,93 @@ public class Refactoring {
 }
 ```
 이외에도 조건식을 반대로 만들어 early return 하는 방법도 존재한다.
+
+# 10.4 조건부 로직을 다형성으로 바꾸기
+조건부 로직은 해석하기 가장 난해한 대상 중 하나다. 직관적인 구조로 바꾸는 편이 좋다.
+많은 경우 클래스와 다형성을 이용해 분리하는 편이 유리하지만 반드시 그러한 것은 아니다.
+
+## 절차
+1. 다형적 동작을 표현하는 클래스들이 아직 없다면 만들어준다. 이왕이면 적합한 인스턴스를 알아서 만들어 반환하는 팩터리 함수도 만들자.
+2. 호출하는 코드에서 팩터리 함수를 사용하게 한다.
+3. 조건부 로직함수를 슈퍼클래스로 옮긴다.(함수로 추출한 다음)
+4. 서브클래스 중 하나를 선택해 슈퍼클래스의 조건부 로직 메서드를 오버라이드한다. 조건부 문장 중 선택된 서브 클래스에 해당하는 조건절을 서브클래스 메서드로 복사한 다음 적절히 수정한다.
+5. 같은 방식으로 각 조건저을 해당 서브클래스에서 메서드로 구현한다.
+6. 슈퍼클래스 메서드에는 기본 동작 부분만 남긴다. 혹은 슈퍼클래스가 추상클래스여야 한다면, 이 메서드를 추상으로 선언하거나 서브클래스에서 처리해야 함을 알리는 에러를 던진다.
+
+## 예시 1
+```java
+public abstract class Bird {
+
+    String name;
+    String type;
+    int numberOfCoconuts;
+    int voltage;
+    boolean isNailed;
+
+    public Bird (Bird bird) {
+        this.name = bird.name;
+
+    }
+
+    public abstract String plumage();
+
+    public abstract Integer airSpeedVelocity();
+}
+
+public class BirdSample {
+
+   public Map<String, String> plumages(Bird[] birds) {
+      return Arrays.stream(birds)
+              .collect(Collectors.toMap(
+                      bird -> bird.name,
+                      bird -> createBird(bird).plumage()
+              ));
+   }
+
+   // 새 배열을 속도로 매핑
+   public Map<String, Integer> speeds(Bird[] birds) {
+      return Arrays.stream(birds)
+              .collect(Collectors.toMap(
+                      bird -> bird.name,
+                      bird -> createBird(bird).airSpeedVelocity()
+              ));
+   }
+}
+
+public class BirdFactory {
+
+   public static Bird createBird(Bird bird) {
+      switch (bird.type) {
+         case "유럽 제비":
+            return new EuropeanSwallow(bird);
+         case "아프리카 제비":
+            return new AfricanSwallow(bird);
+         case "노르웨이 파랑 앵무":
+            return new NorwegianBlueParrot(bird);
+         default:
+            throw new IllegalArgumentException("일치하는 새가 없음");
+      }
+   }
+}
+```
+
+## 예시 2
+두 번째 예시는 거의 똑같은 객체지만 다른 부분도 있을 경우에 상속을 활용하는 예시를 보여준다.
+코드는 생략
+
+# 10.5 특이 케이스 추가하기
+코드베이스에서 특정 값에 대해 똑같이 반응하는 코드가 여러 곳이라면 그 반응들을 한 곳에 모으는게 효율적이다. 
+특수한 경우의 공통 동작을 요소 하나에 모아서 사용하는 특이 케이스 패턴을 활용해 단순한 함수 호출로 바꿔줄 수 있다. 
+
+이 예시로 적합한 경우가 바로 null값을 다룰 때이다. 그래서 이 패턴을 널 객체 패턴이라고도 한다.
+
+## 절차
+클래스 혹은 데이터 구조를 컨테이너라고 명명한다. 
+1. 컨테이너에 특이 케이스인지를 검사하는 속성을 추가하고, false를 반환하게 한다.
+2. 특이 케이스 여부를 검사하는 속성만을 가진 특이 케이스 객체를 만든다. 이 객체는 true를 반환하게 한다. 
+3. 클라이언트에서 특이 케이스 여부를 검사하는 코드를 함수로 추출한다. 모든 클라이언트가 값을 직접 비교하는 대신 방금 추출한 함수를 사용하도록 고친다.
+4. 코드에 새로운 특이 케이스 대상을 추가한다. 함수의 반환 값으로 받거나 변환 함수를 적용하면 된다.
+5. 특이 케이스를 검사하는 함수 본문을 수정해 특이 케이스 객체의 속성을 사용하도록 한다.
+6. 테스트한다.
+7. 여러 함수를 클래스로 묶기나 여러 함수를 변환 함수를 묶기를 적용해 특이 케이스를 처리하는 공통 동작을 새로운 요소로 옮긴다.
+8. 아직도 특이 케이스 검사 함수를 이용하는 곳이 남아 있다면 검사 함수를 인라인한다.
