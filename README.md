@@ -11,3 +11,4 @@
 - [Chapter07 - 캡슐화](docs/CHAPTER07.md)
 - [Chapter08 - 기능 이동](docs/CHAPTER08.md)
 - [Chapter09 - 데이터 조직화](docs/CHAPTER09.md)
+- [Chapter10 - 조건부 로직 간소화](docs/CHAPTER10.md)
