@@ -290,3 +290,39 @@ public class Refactoring {
     }
 }
 ```
+
+# 11.12 오류 코드를 예외로 바꾸기
+예외를 사용하면 오류 코드를 일일이 검사하거나 오류를 식별해 콜스택 위로 던지는 일을 신경쓰지 않아도 된다.
+**현대의 프로그래밍 대부분에선 오류 코드를 반환하기보단 예외를 사용하므로, 레거시를 다룰 때 이러한 상황을 마주하면 이 리팩터링을 다시 찾아보자.**
+
+```javascript
+if (data)
+    return new ShippingRules(data);
+else
+    return -23;
+```
+
+# 11.13 예외를 사전확인으로 바꾸기
+예외는 '뜻밖의 오류'라는 말 그대로 예외적으로 동작할 때만 쓰여야 한다. 
+함수 수행시 문제가 될 수 있는 조건을 함수 호출 전에 검사할 수 있다면, 예외를 던지는 대신 호출하는 곳에서 조건을 검사하도록 해야 한다.
+
+## 절차
+1. 예외를 유발하는 상황을 검사할 수 있는 조건문을 추가한다. catch 블록의 코드를 조건문의 조건절 중 하나로 옮기고, 남은 try 블록의 코드를 다른 조건절로 옮긴다.
+2. catch 블록에 어서션을 추가하고 테스트한다.
+3. try-catch 블록을 제거한다.
+4. 테스트한다.
+
+```java
+public class Refactoring {
+
+    private Deque<Resource> available;
+    private List<Resource> allocated;
+
+    public Resource get() {
+        Resource result = available.isEmpty() ? Resource.create() : available.pop();
+        allocated.add(result);
+        
+        return result;
+    }
+}
+```
