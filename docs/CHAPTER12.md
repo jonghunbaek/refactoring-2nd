@@ -428,3 +428,96 @@ public class Department extends Party{
 10. 서브 클래스들의 생성자를 호출하는 코드를 찾아서 슈퍼 클래스의 생성자를 사용하도록 수정한다.
 11. 테스트한다.
 12. 서브 클래스를 삭제 한다.
+
+## 예시
+```java
+public class Booking {
+
+    protected Show show;
+    protected LocalDate date;
+    protected boolean isPeakDay;
+    protected PremiumBookingDelegate premiumDelegate;
+
+    public Booking(Show show, LocalDate date) {
+        this.show = show;
+        this.date = date;
+    }
+
+    public static Booking createBooking(Show show, LocalDate date) {
+        return new Booking(show, date);
+    }
+
+    public static Booking createPremiumBooking(Show show, LocalDate date, Extras extras) {
+        Booking result = new Booking(show, date);
+        result.bePremium(extras);
+        return result;
+    }
+
+    protected void bePremium(Extras extras) {
+        this.premiumDelegate = new PremiumBookingDelegate(this, extras);
+    }
+
+    public boolean hasTalkback() {
+        return (this.premiumDelegate) != null ? this.premiumDelegate.hasTalkback() : this.show.hasOwnProperty("talkback") && !isPeakDay;
+    }
+
+    public int basePrice() {
+        int result = this.show.getPrice();
+        if (isPeakDay) result += (int) Math.round(result * 0.15);
+
+        return this.premiumDelegate != null ? this.premiumDelegate.extendBasePrice(result) : result;
+    }
+
+    public boolean hasDinner() {
+        return this.premiumDelegate != null ? this.premiumDelegate.hasDinner() : false;
+    }
+}
+
+public class PremiumBookingDelegate {
+
+    private Booking hostBooking;
+    private Extras extras;
+
+    public PremiumBookingDelegate(Booking hostBooking, Extras extras) {
+        this.hostBooking = hostBooking;
+        this.extras = extras;
+    }
+
+    public boolean hasTalkback() {
+        return hostBooking.show.hasOwnProperty("talkback");
+    }
+
+    public int extendBasePrice(int base) {
+        return Math.round(base + this.extras.getPremiumFee());
+    }
+
+    public boolean hasDinner() {
+        return this.extras.hasOwnProperty("dinner") && !this.hostBooking.isPeakDay;
+    }
+}
+```
+
+# 12.11 슈퍼클래스를 위임으로 바꾸기
+상속은 강력하고 손쉬운 기능이다. 
+그렇기에 그 단점 또한 명확한데, 바로 혼란과 복잡도를 키울 수 있다는 점이다.
+대표적인 예로, 자바의 스택 클래스가 그러하다.
+올바른 상속이 되려면 서브클래스가 슈퍼클래스의 모든 기능을 사용해야 하며, 서브 클래스의 인스턴스를 슈퍼클래스의 인스턴로도 취급할 수 있어야 한다.
+
+> 이름과 엔진 크기 등을 속성으로 갖는 자동차 모델 클래스가 있다고하자. 
+> 그러면 여기에 차량 식별 번호와 제조일자 메서드를 더하면 물리적인 자동차를 표현하는 데 재활용할 수 있을 거라 착각할 수 있다. 
+> 이는 흔하고 미묘한 모델링 실수로 내가 타입-인스턴스 동형이의어(type-instance homonym)라고 부르는 것이다.
+> (자동차 모델과 실제 자동차는 다른 개념이므로)
+
+
+서브클래싱 방식 모델링이 합리적이더라도 슈퍼클래스를 위임으로 바꾸기도 한다. 
+슈퍼클래스-서브클래스는 강결합되기 때문에 슈퍼 클래스의 변경사항이 서브클래스에 큰 영향을 미치기 때문이다. 
+
+위임에도 물론 단점이 존재한다.
+바로 위임의 기능을 이용할 호스트의 함수 모두를 전달 함수로 만들어야 한다는 점이다. 
+
+## 절차
+1. 슈퍼클래스 객체를 참조하는 필드를 서브클래스에 만든다. 
+2. 슈퍼클래스의 동작 각각에 대응하는 전달 함수를 서브클래스에 만든다. 서로 관련된 함수끼리 그룹으로 묶어 진행하며, 그룹을 하나씩 만들 때마다 테스트한다.
+3. 슈퍼클래스의 동작 모두가 전달 함수로 오버라이드되었다면 상속 관계를 끝는다.
+
+## 예시
